@@ -3,9 +3,12 @@ const conn = require('./_db');
 const Office = require('./Office');
 const Store = require('./Store');
 const Place = require('./Place');
+const Day = require('./Day');
 
 Office.belongsTo(Place);
 Store.belongsTo(Place);
+Day.belongsTo(Office);
+Day.belongsTo(Store);
 
 
 const sync = ()=>{
@@ -20,6 +23,9 @@ const places = [
 
 const seed = () =>{
   let statueOfLiberty, empireStateBuilding, fullStack;
+  let slOffice, esbOffice, fsOffice;
+  let slStore, esbStore;
+
   return sync()
   .then(()=>Promise.all(
     places.map( place => Place.create(place))
@@ -30,10 +36,22 @@ const seed = () =>{
     Office.create( { name: 'ESB Office', placeId: empireStateBuilding.id } ),
     Office.create( { name: 'FS Office', placeId: fullStack.id } )
   ]))
-  .then( () => Promise.all([
-    Store.create({ name: 'SL Store', placeId: statueOfLiberty.id }),
-    Store.create({ name: 'ESB Store', placeId: empireStateBuilding.id })
-  ]))
+  .then( (offices) => {
+    [slOffice, esbOffice, fsOffice] = offices;
+
+      return Promise.all([
+      Store.create({ name: 'SL Store', placeId: statueOfLiberty.id }),
+      Store.create({ name: 'ESB Store', placeId: empireStateBuilding.id })
+      ])
+    }
+  )
+  .then( (stores) => {
+    [slStore,esbStore] = stores;
+    return Promise.all([
+      Day.create({ officeId: slOffice.id, storeId: slStore.id }),
+      Day.create({ officeId: esbOffice.id, storeId: slStore.id })
+    ])
+  })
 }
 
 module.exports = {
@@ -42,6 +60,7 @@ module.exports = {
   models: {
     Office,
     Store,
-    Place
+    Place,
+    Day
   }
 }
