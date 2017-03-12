@@ -1,0 +1,21 @@
+{
+  "name": "8_eric-acme-office-stores",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:dev": "DATABASE_URL=postgres://localhost/eric_acme_offices_stores nodemon --ignore public/ server"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "express": "^4.15.0",
+    "jquery": "^3.1.1",
+    "pg": "^6.1.2",
+    "sequelize": "^3.30.2",
+    "swig": "^1.4.2"
+  }
+}

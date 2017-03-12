@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="/vendors/bootstrap/dist/css/bootstrap.css">
+  <script src="https://maps.googleapis.com/maps/api/js"></script>
+  <script src="/vendors/jquery/dist/jquery.js"></script>
+  <script src="/public/app.js" defer></script>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Acme Offices Stores Demo</h1>
+    <div class="row">
+      <div class="col-xs-6">
+        <div id="visitPickers">
+          <form class="well">
+            <div class="form-group">
+              <select class="form-control">
+                {% for office in offices %}
+                  <option value='{{ office.id }}'>{{ office.name }} - {{ office.place.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <button class="btn btn-primary">Add Office Visit</button>
+          </form>
+
+          <form class="well">
+            <div class="form-group">
+              <select class="form-control">
+                {% for store in stores %}
+                <option value='{{ store.id }}'>{{ store.name }} - {{ store.place.name }}</option>
+
+                {% endfor %}
+              </select>
+            </div>
+            <button class="btn btn-primary">Add Store Visit</button>
+          </form>
+        </div>
+        <div id="dayPicker">
+        </div>
+        <div id="dayView">
+        </div>
+      </div>
+
+      <div class="col-xs-6">
+        <div id="map" style="height: 500px">
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var offices = {{ offices | raw | json }}
+    var stores = {{ stores | raw | json }}
+  </script>
+
+  <script>
+    var options = {
+      center: new google.maps.LatLng(40.705189, -74.009209),
+      //mapTypeId: google.maps.MapTypeId.ROADMAP,
+      zoom: 16
+    }
+    var map = new google.maps.Map(document.getElementById('map'),options);
+    var bounds = new google.maps.LatLngBounds();
+
+    var markers = offices.map(function(office){
+      return new google.maps.Marker(
+        {
+          position: new google.maps.LatLng(office.place.lat, office.place.lng),
+          title: office.name
+        }
+      )
+    })
+    markers.forEach(function(marker){
+      marker.setMap(map);
+      bounds.extend(marker.position);
+      map.fitBounds(bounds);
+    })
+  </script>
+
+</body>
+
+
+</html>
